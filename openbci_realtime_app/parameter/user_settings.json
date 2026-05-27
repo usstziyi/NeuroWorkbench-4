@@ -1,6 +1,6 @@
 {
   "device": {
-    "name": "cyton",
+    "name": "synthetic",
     "serial_port": "/dev/cu.usbmodem112101"
   },
   "display": {
@@ -10,17 +10,17 @@
   },
   "process": {
     "detrend": true,
-    "bp_low_hz": 1.0,
+    "bp_low_hz": 0.5,
     "bp_high_hz": 40.0,
     "notch_hz": 50.0
   },
   "spectrum": {
     "window_type": "Hann",
-    "spectrum_window": 2.0,
+    "spectrum_window": 4.0,
     "overlap_ratio": 50
   },
   "recording": {
-    "record_original": true,
+    "record_original": false,
     "record_processed": false
   }
 }

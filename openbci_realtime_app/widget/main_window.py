@@ -34,7 +34,7 @@ MAX_BUFFER_MINUTES = 60  # 60s数据
 class MainWindow(QMainWindow):
     def __init__(self, settings: Settings):
         super().__init__()
-        self.setWindowTitle("OpenBCI EEG - Real-time Monitor")
+        self.setWindowTitle("NeuroWorkbench - 实时脑电信号采集平台")
         self.resize(1400, 900)
         
 
