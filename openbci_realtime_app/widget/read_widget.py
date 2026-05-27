@@ -94,3 +94,13 @@ class ReadWidget(QWidget):
 
     def set_text_lower(self, text: str):
         self._lower_label.setText(text)
+
+    def pause(self):
+        self._timer.stop()
+        self._countdown_timer.stop()
+
+    def resume(self):
+        self._countdown = 10
+        self._countdown_label.setText(str(self._countdown))
+        self._timer.start(10000)
+        self._countdown_timer.start(1000)

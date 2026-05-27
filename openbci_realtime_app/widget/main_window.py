@@ -141,17 +141,17 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
         
-        bottom_tab_widget = QTabWidget()
+        self._bottom_tab_widget = QTabWidget()
         self.psd_widget_bottom = PSDWidget(channels=8)
         self.band_power_widget = BandPowerWidget(channels=8)
         self.spectrogram_widget = QWidget()
 
-        bottom_tab_widget.addTab(self.psd_widget_bottom, "PSD 频谱图")  
-        bottom_tab_widget.addTab(self.band_power_widget, "频带能量图")
-        bottom_tab_widget.addTab(self.spectrogram_widget, "时频图")
+        self._bottom_tab_widget.addTab(self.psd_widget_bottom, "PSD 频谱图")  
+        self._bottom_tab_widget.addTab(self.band_power_widget, "频带能量图")
+        self._bottom_tab_widget.addTab(self.spectrogram_widget, "时频图")
 
 
-        layout.addWidget(bottom_tab_widget)
+        layout.addWidget(self._bottom_tab_widget)
         return widget
 
     def _setup_menubar(self):
@@ -210,6 +210,8 @@ class MainWindow(QMainWindow):
         panel.stop_requested.connect(self._on_stop)
         panel.record_toggled.connect(self._on_record_toggled)
         panel.config_changed.connect(self._on_config_changed)
+        self.tab_widget.currentChanged.connect(self._on_center_tab_changed)
+        self.read_widget.pause()
 
     def _update_processing_config(self) -> None:
         detrend  = self._settings.get("process", "detrend", default=True)
@@ -383,24 +385,19 @@ class MainWindow(QMainWindow):
 
     def _on_processed_data(self, result: ProcessingResult) -> None:
         try:
-            # 时域图
             if result.eeg_processed.size > 0 and result.eeg_processed.ndim >= 2:
-                # 更新eeg_clean
-                new_len = result.eeg_processed.shape[1]
-                # self._eeg_clean[:, :-new_len] = self._eeg_clean[:, new_len:]
-                # self._eeg_clean[:, -new_len:] = result.eeg_processed[:, -new_len:]
-                # 根据display.window_seconds取最近window_sample_num个样本
-                # window_sample_num = int(self._sample_rate * self._window_seconds)
-                # times = np.arange(-window_sample_num + 1, 1) / self._sample_rate
+                if self.eeg_widget.isVisible():
+                    new_len = result.eeg_processed.shape[1]
+                    times = np.arange(-new_len + 1, 1) / self._sample_rate
+                    self.eeg_widget.updata_data(times, result.eeg_processed)
 
-                times = np.arange(-new_len + 1, 1) / self._sample_rate
-                self.eeg_widget.updata_data(times, result.eeg_processed)
-            # 频谱图
             if result.psd_freqs.size > 0 and result.psd_values.size > 0:
-                self.psd_widget_bottom.update_psd(result.psd_freqs, result.psd_values)
-            # 频带能量图
+                if self.psd_widget_bottom.isVisible():
+                    self.psd_widget_bottom.update_psd(result.psd_freqs, result.psd_values)
+
             if result.band_powers:
-                self.band_power_widget.update_band_powers(result.band_powers)
+                if self.band_power_widget.isVisible():
+                    self.band_power_widget.update_band_powers(result.band_powers)
         except Exception:
             pass
 
@@ -463,6 +460,12 @@ class MainWindow(QMainWindow):
                     self._record_original = value
                 case "recording.record_processed":
                     self._record_processed = value
+
+    def _on_center_tab_changed(self, index: int) -> None:
+        if index == 2:
+            self.read_widget.resume()
+        else:
+            self.read_widget.pause()
                     
 
 
