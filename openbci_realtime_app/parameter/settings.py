@@ -22,7 +22,8 @@ _DEFAULT_CONFIG = {
     "spectrum": {
         "window_type": "Hann",
         "spectrum_window": 4.0,
-        "overlap_ratio": 50
+        "overlap_ratio": 50,
+        "freqs_range": 60.0
     },
     "recording": {
         "record_original": False,

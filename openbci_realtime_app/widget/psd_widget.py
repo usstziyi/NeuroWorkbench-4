@@ -45,6 +45,9 @@ class PSDWidget(QWidget):
     def channel(self) -> int:
         return self._channel_index
 
+    def set_freq_range(self, max_freq: float) -> None:
+        self._plot_widget.setXRange(0, max_freq)
+
     def update_psd(self, freqs: np.ndarray, psd_values: np.ndarray) -> None:
         if freqs.size == 0 or psd_values.size == 0:
             return

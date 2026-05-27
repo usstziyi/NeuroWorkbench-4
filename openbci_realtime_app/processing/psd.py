@@ -25,11 +25,13 @@ class PSDAnalyzer:
         window_type: str = "Hann",
         spectrum_window: float = 4.0,
         overlap_ratio: float = 50.0,
+        freqs_range: float = 60.0,
     ):
         self._fs = sampling_rate
         self._window_type = window_type
         self._spectrum_window = spectrum_window
         self._overlap_ratio = overlap_ratio
+        self._freqs_range = freqs_range
 
     def update_config(
         self,
@@ -37,6 +39,7 @@ class PSDAnalyzer:
         window_type: str | None = None,
         spectrum_window: float | None = None,
         overlap_ratio: float | None = None,
+        freqs_range: float | None = None,
     ) -> None:
         if sampling_rate is not None:
             self._fs = sampling_rate
@@ -46,10 +49,13 @@ class PSDAnalyzer:
             self._spectrum_window = spectrum_window
         if overlap_ratio is not None:
             self._overlap_ratio = overlap_ratio
+        if freqs_range is not None:
+            self._freqs_range = freqs_range
 
     def compute(self, eeg_data: np.ndarray) -> PSDResult:
         freqs, psd = self._welch(eeg_data)
-        return PSDResult(freqs=freqs, psd=psd)
+        mask = freqs <= self._freqs_range
+        return PSDResult(freqs=freqs[mask], psd=psd[:, mask])
 
     def _welch(self, data: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         nperseg = int(self._spectrum_window * self._fs)

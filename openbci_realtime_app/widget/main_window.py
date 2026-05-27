@@ -57,7 +57,9 @@ class MainWindow(QMainWindow):
         self._record_original: bool = False
         self._record_processed: bool = False
         self._refresh_ms: int = 50
+        self._amplitude_range: float = 1000.0
         self._window_seconds: int = 5.0
+        self._freqs_range: float = 60.0
 
 
         self._init_ui()
@@ -218,6 +220,7 @@ class MainWindow(QMainWindow):
         window_type = self._settings.get("spectrum", "window_type", default="Hann")
         spectrum_window = self._settings.get("spectrum", "spectrum_window", default=4.0)
         overlap_ratio = self._settings.get("spectrum", "overlap_ratio", default=50)
+        freqs_range = self._settings.get("spectrum", "freqs_range", default=60.0)
         self._processing_config = ProcessingConfig(
             detrend=detrend,
             bp_low_hz=bp_low_hz,
@@ -227,6 +230,7 @@ class MainWindow(QMainWindow):
             window_type=window_type,
             spectrum_window=spectrum_window,
             overlap_ratio=overlap_ratio,
+            freqs_range=freqs_range,
         )
         self._processing_worker.update_config(self._processing_config)
 
@@ -260,9 +264,11 @@ class MainWindow(QMainWindow):
             # 更新界面
             self._control_panel.set_connected(True)
             self._window_seconds = self._settings.get("display", "window_seconds", default=4.0)
-            amplitude_range = self._settings.get("display", "amplitude_range", default=100) 
+            self._amplitude_range = self._settings.get("display", "amplitude_range", default=100) 
+            self._freqs_range = self._settings.get("spectrum", "freqs_range", default=60.0)
             self.eeg_widget.set_x_range(self._window_seconds)
-            self.eeg_widget.set_y_range(amplitude_range)
+            self.eeg_widget.set_y_range(self._amplitude_range)
+            self.psd_widget_bottom.set_freq_range(self._freqs_range)
 
             # 更新一下工作线程的配置参数
             self._update_processing_config()
@@ -434,6 +440,8 @@ class MainWindow(QMainWindow):
                     self._update_processing_config()
                 case "spectrum.overlap_ratio":
                     self._update_processing_config()
+                case "spectrum.freqs_range":
+                    self._update_processing_config()
 
 
 
@@ -447,6 +455,9 @@ class MainWindow(QMainWindow):
                 case "display.refresh_ms":
                     self._refresh_ms = value
                     self._timer.setInterval(value)
+                case "spectrum.freqs_range":
+                    self.psd_widget.set_freq_range(value)
+                    self.psd_widget_bottom.set_freq_range(value)
                 case "recording.record_original":
                     self._record_original = value
                 case "recording.record_processed":

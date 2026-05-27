@@ -25,6 +25,7 @@ class ProcessingConfig:
     window_type: str = "Hann"
     spectrum_window: float = 4.0
     overlap_ratio: float = 50
+    freqs_range: float = 60.0
 
 
 @dataclass(frozen=True)
@@ -80,6 +81,7 @@ class ProcessingWorker(QObject):
             window_type=config.window_type,
             spectrum_window=config.spectrum_window,
             overlap_ratio=config.overlap_ratio,
+            freqs_range=config.freqs_range,
         )
         
 

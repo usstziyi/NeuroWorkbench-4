@@ -224,6 +224,9 @@ class ControlPanel(QWidget):
         self._overlap_ratio.valueChanged.connect(
             lambda v: emit("spectrum.overlap_ratio", v)
         )
+        self._freqs_range.valueChanged.connect(
+            lambda v: emit("spectrum.freqs_range", v)
+        )
 
         self._window_time_spin.valueChanged.connect(
             lambda v: emit("display.window_seconds", v)
@@ -276,6 +279,9 @@ class ControlPanel(QWidget):
         )
         self._overlap_ratio.setValue(
             settings.get("spectrum", "overlap_ratio", default=10)
+        )
+        self._freqs_range.setValue(
+            settings.get("spectrum", "freqs_range", default=60)
         )
 
         self._window_time_spin.setValue(
