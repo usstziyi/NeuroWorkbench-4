@@ -396,7 +396,6 @@ class MainWindow(QMainWindow):
             # 频谱图
             if result.psd_freqs.size > 0 and result.psd_values.size > 0:
                 self.psd_widget_bottom.update_psd(result.psd_freqs, result.psd_values[1, :])
-                # self.psd_widget.update_psd(result.psd_freqs, result.psd_values)
             # 带宽功率
             # if result.band_powers:
             #     self._band_power_widget.update_band_powers(result.band_powers)

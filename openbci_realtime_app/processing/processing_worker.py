@@ -28,12 +28,12 @@ class ProcessingConfig:
     freqs_range: float = 60.0
 
 
-@dataclass(frozen=True)
+@dataclass
 class ProcessingResult:
     eeg_processed: np.ndarray
     psd_freqs: np.ndarray
     psd_values: np.ndarray
-    band_powers: list = field(default_factory=list)
+    # band_powers: list = field(default_factory=list)
 
 
 class ProcessingWorker(QObject):

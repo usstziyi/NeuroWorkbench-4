@@ -1,6 +1,7 @@
 import numpy as np
 import pyqtgraph as pg
 from PySide6.QtWidgets import QVBoxLayout, QWidget
+from PySide6 import QtGui
 
 
 CET_R3 = [
@@ -25,10 +26,18 @@ class PSDWidget(QWidget):
         self._plot_widget.getAxis("bottom").autoSIPrefix = False
         self._plot_widget.showGrid(x=True, y=True, alpha=0.3)
         self._plot_widget.setLogMode(x=False, y=True)
+        self._plot_widget.setYRange(-3, 9)
+
+        self._plot_widget.setDownsampling(auto=True, mode="peak")
+        self._plot_widget.setClipToView(True)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self._plot_widget)
+
+        font = QtGui.QFont()
+        font.setPointSize(6)
+        self._plot_widget.getAxis("left").setStyle(tickFont=font)
 
         self._num_channels = channels
         self._curve = {}
@@ -36,8 +45,6 @@ class PSDWidget(QWidget):
         for i in range(channels):
             color = CET_R3[i % len(CET_R3)]
             self._curve[i] = self._plot_widget.plot(pen=pg.mkPen(color, width=1.5))
-
-
 
 
     def set_freq_range(self, max_freq: float) -> None:
@@ -51,8 +58,8 @@ class PSDWidget(QWidget):
 
 
         # 如果psd_values是一维的,转成二维
-        psd_values = psd_values[np.newaxis, :]
-        print(psd_values.shape)
+        if psd_values.ndim == 1:
+            psd_values = psd_values[np.newaxis, :]
 
 
         for i in range(self._num_channels):

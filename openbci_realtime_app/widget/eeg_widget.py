@@ -38,7 +38,7 @@ class EEGWidget(pg.GraphicsLayoutWidget):
         self._curves = {}
 
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(6)
 
         if not eeg_names:
             eeg_names = [f"CH{i+1}" for i in range(8)]

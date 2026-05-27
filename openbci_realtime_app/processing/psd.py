@@ -83,5 +83,6 @@ class PSDAnalyzer:
             if freqs is None:
                 freqs = f
             psd_list.append(pxx)
+        print(psd_list[0][:20])
 
         return freqs, np.array(psd_list)
