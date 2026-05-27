@@ -26,6 +26,7 @@ from .control_panel import ControlPanel
 from .eeg_widget import EEGWidget
 from .psd_widget import PSDWidget
 from .read_widget import ReadWidget
+from .time_freq_widget import TimeFreqWidget
 from .band_power_widget import BandPowerWidget
 
 MAX_BUFFER_MINUTES = 60  # 60s数据
@@ -51,6 +52,11 @@ class MainWindow(QMainWindow):
         self._eeg_data: np.ndarray = np.array([]) # eeg通道数据
         self._eeg_clean: np.ndarray = np.array([]) # eeg通道清洗数据
         self._session: BoardSession | None = None
+        self._time_freq_data = np.full(
+            (120, 241),
+            1e-3,
+            dtype=np.float32,
+        )
 
 
         # 可以从settings中获取的属性
@@ -116,7 +122,6 @@ class MainWindow(QMainWindow):
         self._eeg_names=['Fp1', 'Fp2', 'C3', 'C4', 'P7', 'P8', 'O1', 'O2']
         self.eeg_widget = EEGWidget(self._eeg_names)
         self.read_widget = ReadWidget()
-
         self.psd_widget = PSDWidget()
         
         self.tab_widget.addTab(self.eeg_widget, "EEG 时序图")
@@ -144,11 +149,11 @@ class MainWindow(QMainWindow):
         self._bottom_tab_widget = QTabWidget()
         self.psd_widget_bottom = PSDWidget(channels=8)
         self.band_power_widget = BandPowerWidget(channels=8)
-        self.spectrogram_widget = QWidget()
+        self.time_freq_widget = TimeFreqWidget()
 
         self._bottom_tab_widget.addTab(self.psd_widget_bottom, "PSD 频谱图")  
         self._bottom_tab_widget.addTab(self.band_power_widget, "频带能量图")
-        self._bottom_tab_widget.addTab(self.spectrogram_widget, "时频图")
+        self._bottom_tab_widget.addTab(self.time_freq_widget, "时频图") 
 
 
         layout.addWidget(self._bottom_tab_widget)
@@ -394,12 +399,17 @@ class MainWindow(QMainWindow):
             if result.psd_freqs.size > 0 and result.psd_values.size > 0:
                 if self.psd_widget_bottom.isVisible():
                     self.psd_widget_bottom.update_psd(result.psd_freqs, result.psd_values)
+                if self.time_freq_widget.isVisible():
+                    self._time_freq_data[:-1] = self._time_freq_data[1:]
+                    self._time_freq_data[-1] = result.psd_values[0,:]
+                    self.time_freq_widget.update_data(self._time_freq_data, 60)
 
             if result.band_powers:
                 if self.band_power_widget.isVisible():
                     self.band_power_widget.update_band_powers(result.band_powers)
+
         except Exception:
-            pass
+            traceback.print_exc()
 
     def _on_record_toggled(self, checked: bool) -> None:
         if checked:
