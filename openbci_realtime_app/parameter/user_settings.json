@@ -10,8 +10,8 @@
   },
   "process": {
     "detrend": true,
-    "bp_low_hz": 0.5,
-    "bp_high_hz": 40.0,
+    "bp_low_hz": 1.0,
+    "bp_high_hz": 45.0,
     "notch_hz": 50.0
   },
   "spectrum": {
@@ -21,7 +21,7 @@
     "freqs_range": 60.0
   },
   "recording": {
-    "record_original": false,
-    "record_processed": false
+    "record_original": true,
+    "record_processed": true
   }
 }

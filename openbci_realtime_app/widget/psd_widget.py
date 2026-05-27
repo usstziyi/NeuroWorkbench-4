@@ -16,39 +16,39 @@ CET_R3 = [
 ]
 
 
-class PSDWidget(QWidget):
-    def __init__(self, channels: int = 1, parent: QWidget | None = None):
+class PSDWidget(pg.GraphicsLayoutWidget):
+    def __init__(self, channels: int = 8, parent: QWidget | None = None):
         super().__init__(parent)
-        self._plot_widget = pg.PlotWidget()
-        self._plot_widget.setLabel("left", "Power Spectral Density", units="µV²/Hz")
-        self._plot_widget.setLabel("bottom", "Frequency", units="Hz")
-        self._plot_widget.getAxis("left").autoSIPrefix = False
-        self._plot_widget.getAxis("bottom").autoSIPrefix = False
-        self._plot_widget.showGrid(x=True, y=True, alpha=0.3)
-        self._plot_widget.setLogMode(x=False, y=True)
-        self._plot_widget.setYRange(-3, 9)
+        self.setBackground("k")
+        self._plot = self.addPlot(row=0, col=0)
+        self._plot.setLabel("left", "Power Spectral Density", units="µV²/Hz")
+        self._plot.setLabel("bottom", "Frequency", units="Hz")
+        self._plot.getAxis("left").autoSIPrefix = False
+        self._plot.getAxis("left").setWidth(60)
+        self._plot.getAxis("bottom").autoSIPrefix = False
+        self._plot.showGrid(x=True, y=True, alpha=0.3)
+        self._plot.setLogMode(x=False, y=True)
+        self._plot.setYRange(-3, 9)
 
-        self._plot_widget.setDownsampling(auto=True, mode="peak")
-        self._plot_widget.setClipToView(True)
+        self._plot.setDownsampling(auto=True, mode="peak")
+        self._plot.setClipToView(True)
 
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self._plot_widget)
+
 
         font = QtGui.QFont()
         font.setPointSize(6)
-        self._plot_widget.getAxis("left").setStyle(tickFont=font)
+        self._plot.getAxis("left").setStyle(tickFont=font)
 
         self._num_channels = channels
         self._curve = {}
 
         for i in range(channels):
             color = CET_R3[i % len(CET_R3)]
-            self._curve[i] = self._plot_widget.plot(pen=pg.mkPen(color, width=1.5))
+            self._curve[i] = self._plot.plot(pen=pg.mkPen(color, width=1.5))
 
 
     def set_freq_range(self, max_freq: float) -> None:
-        self._plot_widget.setXRange(0, max_freq)
+        self._plot.setXRange(0, max_freq)
 
     def update_psd(self, freqs: np.ndarray, psd_values: np.ndarray) -> None:
         if freqs.size == 0 or psd_values.size == 0:

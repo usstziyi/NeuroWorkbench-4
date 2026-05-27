@@ -112,12 +112,14 @@ class ProcessingWorker(QObject):
     def _do_process(self, eeg_data: np.ndarray) -> None:
         config = self._config
 
+
         if config.detrend:
             eeg_data = eeg_data - np.mean(eeg_data, axis=1, keepdims=True)
 
         filtered = self._filter.apply(eeg_data)
 
         psd_result = self._psd_analyzer.compute(filtered)
+
         # band_power_result = self._band_power_analyzer.compute(
         #     psd_result.psd, psd_result.freqs
         # )
