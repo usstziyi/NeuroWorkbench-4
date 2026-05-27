@@ -33,7 +33,10 @@ class ProcessingResult:
     eeg_processed: np.ndarray
     psd_freqs: np.ndarray
     psd_values: np.ndarray
-    # band_powers: list = field(default_factory=list)
+    # 表示每次创建一个新的 ProcessingResult 实例时，
+    # 都会 调用 list() 来生成一个全新的空列表 []
+    band_powers: list = field(default_factory=list)
+
 
 
 class ProcessingWorker(QObject):
@@ -120,14 +123,15 @@ class ProcessingWorker(QObject):
 
         psd_result = self._psd_analyzer.compute(filtered)
 
-        # band_power_result = self._band_power_analyzer.compute(
-        #     psd_result.psd, psd_result.freqs
-        # )
+        band_power_result = self._band_power_analyzer.compute(
+            psd_result.psd, 
+            psd_result.freqs
+        )
 
         result = ProcessingResult(
             eeg_processed=filtered,
             psd_freqs=psd_result.freqs,
             psd_values=psd_result.psd,
-            # band_powers=band_power_result.band_powers,
+            band_powers=band_power_result.band_powers,
         )
         self.processed_ready.emit(result)

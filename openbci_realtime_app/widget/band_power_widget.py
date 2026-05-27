@@ -1,8 +1,9 @@
 import pyqtgraph as pg
 from PySide6.QtWidgets import QVBoxLayout, QWidget
+from PySide6 import QtGui
 
 
-class BandPowerWidget(QWidget):
+class BandPowerWidget(pg.GraphicsLayoutWidget):
     BAND_NAMES = ["delta", "theta", "alpha", "beta", "gamma"]
     CHANNEL_COLORS = [
         (100, 180, 255),
@@ -15,31 +16,46 @@ class BandPowerWidget(QWidget):
         (220, 220, 100),
     ]
 
-    def __init__(self, parent: QWidget | None = None):
+    CET_R3 = [
+        (214, 68, 60),
+        (239, 143, 44),
+        (200, 202, 52),
+        (65, 183, 130),
+        (50, 138, 190),
+        (80, 82, 185),
+        (139, 61, 159),
+        (197, 50, 120),
+    ]
+
+    def __init__(self, channels: int = 8, parent: QWidget | None = None):
         super().__init__(parent)
-        self._plot_widget = pg.PlotWidget()
+
+        self._num_channels = channels
+        self._bar_items: list[pg.BarGraphItem] = []
+
+        font = QtGui.QFont()
+        font.setPointSize(6)
+
+        self._plot_widget = self.addPlot()
         self._plot_widget.setLabel("left", "Relative Power")
+        self._plot_widget.getAxis("left").setWidth(60)
+        self._plot_widget.getAxis("left").setStyle(tickFont=font)
         self._plot_widget.setLabel("bottom", "Frequency Band")
         self._plot_widget.showGrid(y=True, alpha=0.3)
 
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self._plot_widget)
 
-        self._bar_items: list[pg.BarGraphItem] = []
-        self._num_channels = 0
-
-    def setup_channels(self, num_channels: int) -> None:
         self._plot_widget.clear()
         self._bar_items.clear()
-        self._num_channels = num_channels
         x_axis = self._plot_widget.getAxis("bottom")
         x_axis.setTicks([[(i, name) for i, name in enumerate(self.BAND_NAMES)]])
-        bar_width = 0.8 / max(num_channels, 1)
-        for i in range(num_channels):
+        bar_width = 0.8 / max(self._num_channels, 1)
+        for i in range(self._num_channels):
             color = self.CHANNEL_COLORS[i % len(self.CHANNEL_COLORS)]
             bar = pg.BarGraphItem(
-                x=[], height=[], width=bar_width, brush=color
+                x=[], 
+                height=[], 
+                width=bar_width, 
+                brush=color
             )
             self._plot_widget.addItem(bar)
             self._bar_items.append(bar)

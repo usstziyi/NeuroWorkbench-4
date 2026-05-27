@@ -141,7 +141,7 @@ class MainWindow(QMainWindow):
         bottom_tab_widget = QTabWidget()
         self.psd_widget_bottom = PSDWidget(channels=8)
         self.spectrogram_widget = QWidget()
-        self.band_power_widget = QWidget()
+        self.band_power_widget = BandPowerWidget()
         bottom_tab_widget.addTab(self.psd_widget_bottom, "PSD 频谱图")  
         bottom_tab_widget.addTab(self.spectrogram_widget, "时频图")
         bottom_tab_widget.addTab(self.band_power_widget, "频带能量图")
