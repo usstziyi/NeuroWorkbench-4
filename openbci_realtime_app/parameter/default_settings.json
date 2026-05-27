@@ -5,19 +5,20 @@
   },
   "display": {
     "refresh_ms": 50,
-    "window_seconds": 4.0,
-    "amplitude_range": 100
+    "window_seconds": 15.0,
+    "amplitude_range": 2000
   },
   "process": {
     "detrend": true,
-    "bp_low_hz": 0.1,
-    "bp_high_hz": 45.0,
+    "bp_low_hz": 0.5,
+    "bp_high_hz": 40.0,
     "notch_hz": 50.0
   },
   "spectrum": {
     "window_type": "Hann",
     "spectrum_window": 4.0,
-    "overlap_ratio": 50
+    "overlap_ratio": 50,
+    "freqs_range": 60.0
   },
   "recording": {
     "record_original": false,
