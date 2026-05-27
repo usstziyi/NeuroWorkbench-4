@@ -139,7 +139,7 @@ class MainWindow(QMainWindow):
         layout.setSpacing(6)
         
         bottom_tab_widget = QTabWidget()
-        self.psd_widget_bottom = PSDWidget()
+        self.psd_widget_bottom = PSDWidget(channels=1)
         self.spectrogram_widget = QWidget()
         self.band_power_widget = QWidget()
         bottom_tab_widget.addTab(self.psd_widget_bottom, "PSD 频谱图")  
@@ -395,7 +395,7 @@ class MainWindow(QMainWindow):
                 self.eeg_widget.updata_data(times, self._eeg_clean[:, -window_sample_num:])
             # 频谱图
             if result.psd_freqs.size > 0 and result.psd_values.size > 0:
-                self.psd_widget_bottom.update_psd(result.psd_freqs, result.psd_values)
+                self.psd_widget_bottom.update_psd(result.psd_freqs, result.psd_values[1, :])
                 # self.psd_widget.update_psd(result.psd_freqs, result.psd_values)
             # 带宽功率
             # if result.band_powers:

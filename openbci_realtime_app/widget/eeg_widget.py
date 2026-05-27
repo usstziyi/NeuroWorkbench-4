@@ -58,7 +58,7 @@ class EEGWidget(pg.GraphicsLayoutWidget):
             plot.addLine(y=0, pen=pg.mkPen((255, 255, 255, 60), width=1, style=pg.QtCore.Qt.PenStyle.DashLine))
             plot.getAxis("bottom").autoSIPrefix = False
 
-            curve = plot.plot(pen=pg.mkPen(color, width=1))
+            curve = plot.plot(pen=pg.mkPen(color, width=1.5))
             self._curves[i] = curve
 
             if i == 0:
