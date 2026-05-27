@@ -1,0 +1,26 @@
+{
+  "device": {
+    "name": "synthetic",
+    "serial_port": ""
+  },
+  "display": {
+    "refresh_ms": 50,
+    "window_seconds": 4.0,
+    "amplitude_range": 100
+  },
+  "process": {
+    "detrend": true,
+    "bp_low_hz": 0.1,
+    "bp_high_hz": 45.0,
+    "notch_hz": 50.0
+  },
+  "spectrum": {
+    "window_type": "Hann",
+    "spectrum_window": 4.0,
+    "overlap_ratio": 50
+  },
+  "recording": {
+    "record_original": false,
+    "record_processed": false
+  }
+}
