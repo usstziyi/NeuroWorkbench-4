@@ -10,7 +10,6 @@ BAND_DEFS = {
     "gamma": (30.0, 45.0),
 }
 
-
 @dataclass
 class BandPowerResult:
     band_powers: list
@@ -38,6 +37,7 @@ class BandPowerAnalyzer:
 
 
 """
+band_powers
 [
     {"delta": 0.12, "theta": 0.08, "alpha": 0.45, "beta": 0.25, "gamma": 0.10},  # 通道1
     {"delta": 0.15, "theta": 0.10, "alpha": 0.40, "beta": 0.20, "gamma": 0.15},  # 通道2

@@ -25,7 +25,7 @@ from recording import Recorder
 from .control_panel import ControlPanel
 from .eeg_widget import EEGWidget
 from .psd_widget import PSDWidget
-from .spectrum_widget import SpectrumWidget
+from .read_widget import ReadWidget
 from .band_power_widget import BandPowerWidget
 
 MAX_BUFFER_MINUTES = 60  # 60s数据
@@ -115,10 +115,13 @@ class MainWindow(QMainWindow):
         self.tab_widget = QTabWidget()
         self._eeg_names=['Fp1', 'Fp2', 'C3', 'C4', 'P7', 'P8', 'O1', 'O2']
         self.eeg_widget = EEGWidget(self._eeg_names)
+        self.read_widget = ReadWidget()
+
         self.psd_widget = PSDWidget()
         
         self.tab_widget.addTab(self.eeg_widget, "EEG 时序图")
         self.tab_widget.addTab(self.psd_widget, "PSD 频谱图")
+        self.tab_widget.addTab(self.read_widget, "阅读句子")
 
         layout.addWidget(self.tab_widget)
         return widget
@@ -140,11 +143,12 @@ class MainWindow(QMainWindow):
         
         bottom_tab_widget = QTabWidget()
         self.psd_widget_bottom = PSDWidget(channels=8)
+        self.band_power_widget = BandPowerWidget(channels=8)
         self.spectrogram_widget = QWidget()
-        self.band_power_widget = BandPowerWidget()
+
         bottom_tab_widget.addTab(self.psd_widget_bottom, "PSD 频谱图")  
-        bottom_tab_widget.addTab(self.spectrogram_widget, "时频图")
         bottom_tab_widget.addTab(self.band_power_widget, "频带能量图")
+        bottom_tab_widget.addTab(self.spectrogram_widget, "时频图")
 
 
         layout.addWidget(bottom_tab_widget)
@@ -167,10 +171,6 @@ class MainWindow(QMainWindow):
         if state is not None:
             self.restoreState(state)
 
-    def _init_channels(self) -> None:
-        num_channels = 8
-        self._spectrum_widget.setup_channels(num_channels)
-        self._band_power_widget.setup_channels(num_channels)
 
     def _init_timer(self) -> None:
         self._timer = QTimer(self)
@@ -398,9 +398,9 @@ class MainWindow(QMainWindow):
             # 频谱图
             if result.psd_freqs.size > 0 and result.psd_values.size > 0:
                 self.psd_widget_bottom.update_psd(result.psd_freqs, result.psd_values)
-            # 带宽功率
-            # if result.band_powers:
-            #     self._band_power_widget.update_band_powers(result.band_powers)
+            # 频带能量图
+            if result.band_powers:
+                self.band_power_widget.update_band_powers(result.band_powers)
         except Exception:
             pass
 
