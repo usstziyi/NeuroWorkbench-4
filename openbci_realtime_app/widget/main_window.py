@@ -368,7 +368,7 @@ class MainWindow(QMainWindow):
 
             # 发送给工作线程
             # self._processing_worker.process(new_eeg_data)
-            window_sample_num = int(self._sample_rate * self._window_seconds)
+            window_sample_num = int(self._sample_rate * (self._window_seconds+4))
             self._processing_worker.process(self._eeg_data[:, -window_sample_num:])
             
             # 发送给录制线程

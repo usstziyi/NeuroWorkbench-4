@@ -121,6 +121,9 @@ class ProcessingWorker(QObject):
 
         filtered = self._filter.apply(eeg_data)
 
+        # 截取中间部分，去掉头尾各2s的样本
+        filtered = filtered[:,500:-500]
+
         psd_result = self._psd_analyzer.compute(filtered)
 
         band_power_result = self._band_power_analyzer.compute(
